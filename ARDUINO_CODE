@@ -1,0 +1,123 @@
+ARDUINO CODE TO GET DATA FROM SENSORS --
+
+#include<SoftwareSerial.h>
+#include <Servo.h>
+Servo myservo;
+
+
+ 
+
+SoftwareSerial BTserial(10, 11); // RX | TX
+
+
+int smokeA0 = A5;
+void setup()
+{
+  //Serial1.begin(9600);
+  
+  BTserial.begin(38400);
+  myservo.attach(2);
+  myservo.write(90);
+ 
+}
+void loop()
+{
+  delay(100);
+  int analogSensor = analogRead(smokeA0); //MQ
+  int moisture = analogRead(0);
+  int sensorValue = analogRead(1); //MQ-135
+  //Serial.println("AirQua=");
+  BTserial.print(sensorValue);
+  BTserial.print(" PPM");
+  BTserial.print(",");
+  //Serial.println(moisture);
+  BTserial.print(moisture);
+  BTserial.print(" mg/l");
+  BTserial.print(",");
+  //Serial.print("Smoke sensor: ");
+  BTserial.print(analogSensor); 
+  BTserial.print(";");
+  delay(100);
+ 
+}
+
+
+ARDUINO CODE TO CONTROL THE BOT 
+
+
+#include<SoftwareSerial.h>
+char data ='0';
+void setup()
+{
+  BTserial.begin(9600);
+    Serial.begin(9600);
+    Serial1.begin(9600);
+     pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(9, OUTPUT);
+  digitalWrite(12, LOW);
+  digitalWrite(11, LOW);
+  digitalWrite(10, LOW);
+  digitalWrite(9, LOW);
+  
+}
+void loop()
+{
+    if(Serial1.available() > 0)
+   {
+      data = Serial1.read();
+     if(data=='1'){
+                                     
+        Serial.println("Forward");
+       digitalWrite(12, HIGH);
+  digitalWrite(11, LOW);
+  digitalWrite(10, HIGH);
+  digitalWrite(9, LOW);
+       // forward();
+        
+     }
+
+     else if(data=='2'){               
+       Serial.println("Reverse");
+       digitalWrite(12, LOW);
+  digitalWrite(11, HIGH);
+  digitalWrite(10, LOW);
+  digitalWrite(9, HIGH);
+       
+     }
+
+      else if(data=='3'){      
+       Serial.println("Left");
+       digitalWrite(12, LOW);
+  digitalWrite(11, LOW);
+  digitalWrite(10, HIGH);
+  digitalWrite(9, LOW);
+        
+      }
+        
+      else if(data=='4'){                      
+        Serial.println("Right");
+        digitalWrite(12, HIGH);
+  digitalWrite(11, LOW);
+  digitalWrite(10, LOW);
+  digitalWrite(9, LOW);
+      
+      }
+        
+     else if(data=='5'){                                           
+        Serial.println("Stop");
+        digitalWrite(12, LOW);
+  digitalWrite(11, LOW);
+  digitalWrite(10, LOW);
+     }
+ 
+ 
+     }     
+                                                             
+   if (Serial1.available() < 0)                              
+    {
+    Serial.println("No Bluetooth Data ");          
+    }
+  
+}
